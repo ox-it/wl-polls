@@ -2,8 +2,6 @@
   <name>sakai-poll-tool</name>
   <comment>This project creates a WAR containing the Poll Tool for Sakai.</comment>
   <projects>
-    <project>entitybroker-api</project>
-    <project>entitybroker-utils</project>
     <project>sakai-poll-logic-api</project>
     <project>sakai-poll-model-api</project>
   </projects>
