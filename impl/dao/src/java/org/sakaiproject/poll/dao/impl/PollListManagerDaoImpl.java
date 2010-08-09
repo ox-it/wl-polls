@@ -55,7 +55,7 @@ import org.sakaiproject.poll.model.Poll;
 import org.sakaiproject.poll.model.Vote;
 import org.sakaiproject.site.api.SiteService;
 import org.sakaiproject.tool.api.ToolManager;
-import org.sakaiproject.user.cover.UserDirectoryService;
+import org.sakaiproject.user.api.UserDirectoryService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.w3c.dom.Document;
@@ -102,6 +102,16 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
     private IdManager idManager;
     public void setIdManager(IdManager idm) {
         idManager = idm;
+    }
+    
+    private SiteService siteService;
+    public void setSiteService(SiteService siteService) {
+    	this.siteService = siteService;
+    }
+    
+    private UserDirectoryService userDirectoryService;
+    public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
+    	this.userDirectoryService = userDirectoryService;
     }
 
     public void init() {
@@ -216,10 +226,7 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
             t.setId(idManager.createUuid());
         }
 
-        // we may need to truncate the description field
-        if (t.getDetails().length() > 254)
-            t.setDetails(t.getDetails().substring(0, 254));
-
+             
         try {
             getHibernateTemplate().saveOrUpdate(t);
 
@@ -242,7 +249,7 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 
     public boolean deletePoll(Poll t) throws PermissionException {
         if (!pollCanDelete(t))
-            throw new PermissionException(UserDirectoryService.getCurrentUser().getId(),
+            throw new PermissionException(userDirectoryService.getCurrentUser().getId(),
                     "poll.delete", "poll." + t.getId().toString());
 
         try {
@@ -373,7 +380,7 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 
         if (securityService.unlock(PERMISSION_DELETE_OWN, "/site/"
                 + toolManager.getCurrentPlacement().getContext())
-                && poll.getOwner().equals(UserDirectoryService.getCurrentUser().getId()))
+                && poll.getOwner().equals(userDirectoryService.getCurrentUser().getId()))
             return true;
 
         return false;
@@ -652,6 +659,14 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 		if(poll.getOwner().equals(userId))
 			return true;
 
+		return false;
+	}
+	
+	public boolean isPollPublic(Poll poll) {
+		//can the anonymous user vote?
+		if(securityService.unlock(userDirectoryService.getAnonymousUser(), PollListManager.PERMISSION_VOTE, siteService.siteReference(poll.getSiteId()))){
+			return true;
+		}
 		return false;
 	}
     

@@ -179,11 +179,15 @@ public class PollEntityProvider extends AbstractEntityProvider implements CoreEn
         }
         Long pollId = poll.getPollId();
         String currentUserId = developerHelperService.getCurrentUserId();
+        
         boolean allowedManage = false;
         if (! developerHelperService.isEntityRequestInternal(ref+"")) {
             // not an internal request so we require user to be logged in
             if (currentUserId == null) {
-                throw new SecurityException("User must be logged in in order to access poll data: " + ref);
+            	//is this a public poll? (ie .anon role has poll.vote)
+            	if(!pollListManager.isPollPublic(poll)){
+            		throw new SecurityException("User must be logged in in order to access poll data: " + ref);
+            	}
             } else {
                 String userReference = developerHelperService.getCurrentUserReference();
                 allowedManage = developerHelperService.isUserAllowedInEntityReference(userReference, PollListManager.PERMISSION_ADD, "/site/" + poll.getSiteId());
@@ -191,7 +195,7 @@ public class PollEntityProvider extends AbstractEntityProvider implements CoreEn
                 if (!allowedManage && !allowedVote) {
                     throw new SecurityException("User ("+userReference+") not allowed to access poll data: " + ref);
                 }
-            }
+           }
         }
         Boolean includeVotes = requestStorage.getStoredValueAsType(Boolean.class, "includeVotes");
         if (includeVotes == null) { includeVotes = false; }

@@ -135,5 +135,12 @@ public interface PollListManager extends EntityProducer {
      */
     
     public boolean isAllowedViewResults(Poll poll, String userId);
+    
+    /**
+     * Is this poll public?
+     * @param poll
+     * @return
+     */
+    public boolean isPollPublic(Poll poll);
 
 }
