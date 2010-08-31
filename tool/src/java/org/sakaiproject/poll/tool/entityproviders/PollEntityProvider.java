@@ -20,13 +20,20 @@
 
 package org.sakaiproject.poll.tool.entityproviders;
 
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.sakaiproject.entitybroker.EntityReference;
+import org.sakaiproject.entitybroker.EntityView;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
+import org.sakaiproject.entitybroker.entityprovider.annotations.EntityCustomAction;
+import org.sakaiproject.entitybroker.entityprovider.capabilities.ActionsExecutable;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.CollectionResolvable;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.RESTful;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.RedirectDefinable;
@@ -37,6 +44,8 @@ import org.sakaiproject.entitybroker.entityprovider.extension.TemplateMap;
 import org.sakaiproject.entitybroker.entityprovider.search.Restriction;
 import org.sakaiproject.entitybroker.entityprovider.search.Search;
 import org.sakaiproject.entitybroker.util.AbstractEntityProvider;
+import org.sakaiproject.event.api.UsageSession;
+import org.sakaiproject.event.api.UsageSessionService;
 import org.sakaiproject.exception.PermissionException;
 import org.sakaiproject.poll.logic.PollListManager;
 import org.sakaiproject.poll.logic.PollVoteManager;
@@ -51,7 +60,7 @@ import org.sakaiproject.poll.model.Vote;
  * @author Aaron Zeckoski (azeckoski @ gmail.com)
  */
 public class PollEntityProvider extends AbstractEntityProvider implements CoreEntityProvider, RESTful, 
-        RequestStorable, RedirectDefinable {
+        RequestStorable, RedirectDefinable, ActionsExecutable {
 
     private PollListManager pollListManager;
     public void setPollListManager(PollListManager pollListManager) {
@@ -310,9 +319,98 @@ public class PollEntityProvider extends AbstractEntityProvider implements CoreEn
         return new String[] {Formats.XML, Formats.JSON};
     }
 
-    public String[] getHandledInputFormats() {
-        return new String[] {Formats.XML, Formats.JSON, Formats.HTML};
-    }
+	public String[] getHandledInputFormats() {
+	    return new String[] {Formats.XML, Formats.JSON, Formats.HTML};
+	}
+
+	/**
+	 * Allows a user to create multiple Vote objects at once, taking one or
+	 * more pollOption parameters.
+	 */
+	@EntityCustomAction(action = "vote", viewKey = EntityView.VIEW_NEW)
+	public void vote(EntityView view, EntityReference ref, String prefix, Search search, OutputStream out, Map<String,Object> params) {
+		String id = ref.getId();
+		if (id == null) {
+			throw new IllegalArgumentException("The reference must include an id for updates (id is currently null)");
+		}
+		String userId = developerHelperService.getCurrentUserId();
+		if (userId == null) {
+			throw new SecurityException("user must be logged in to create new votes");
+		}
+		Poll poll = getPollById(id);
+		if (poll == null) {
+			throw new IllegalArgumentException("No poll found to update for the given reference: " + ref);
+		}
+		if (! pollVoteManager.isUserAllowedVote(userId, poll.getPollId(), false)) {
+			throw new SecurityException("User ("+userId+") is not allowed to vote in this poll ("+poll.getPollId()+")");
+		}
+
+		Set<String> optionIds = new HashSet<String>();
+		Object param = params.get("pollOption");
+		if (param == null) {
+			throw new IllegalArgumentException("At least one pollOption parameter must be provided to vote.");
+		} else if (param instanceof String) {
+			optionIds.add((String) param);
+		} else if (param instanceof List<?>) {
+			for (Object o : (List<?>) param)
+				if (o instanceof String)
+					optionIds.add((String) o);
+				else
+					throw new IllegalArgumentException("Each pollOption must be a String, not " + o.getClass().getName());
+		} else
+			throw new IllegalArgumentException("pollOption must be String or List<String>, not " + param.getClass().getName());
+
+		// Turn each option String into an Option, making sure that each is a
+		// valid choice for the poll. We use a Map to make sure one cannot vote
+		// more than once for any option by specifying it using equivalent
+		// representations
+		Map<Long,Option> options = new HashMap<Long,Option>();
+		for (String optionId : optionIds) {
+			try {
+				Option option = pollListManager.getOptionById(Long.valueOf(optionId));
+				if (option.getPollId() != poll.getPollId())
+					throw new Exception();
+				options.put(option.getOptionId(), option);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("Invalid pollOption: " + optionId);
+			}
+		}
+
+		// Validate that the number of options voted for is within acceptable bounds.
+		if (options.size() < poll.getMinOptions())
+			throw new IllegalArgumentException("You must provide at least " + poll.getMinOptions() + " options, not " + options.size() + ".");
+		if (options.size() > poll.getMaxOptions())
+			throw new IllegalArgumentException("You may provide at most " + poll.getMaxOptions() + " options, not " + options.size() + ".");
+
+		// Create and save the Vote objects.
+		UsageSession usageSession = usageSessionService.getSession();
+		for (Option option : options.values()) {
+			Vote vote = new Vote();
+
+			vote.setVoteDate( new Date() );
+			vote.setUserId(userId);
+			vote.setPollId(poll.getPollId());
+			vote.setPollOption(option.getOptionId());
+
+			if (vote.getSubmissionId() == null) {
+				String sid = userId + ":" + UUID.randomUUID();
+				vote.setSubmissionId(sid);
+			}
+
+			if (usageSession != null)
+				vote.setIp( usageSession.getIpAddress() );
+
+			boolean saved = pollVoteManager.saveVote(vote);
+			if (!saved) {
+				throw new IllegalStateException("Unable to save vote ("+vote+") for user ("+userId+"): " + ref);
+			}
+		}
+	}
+
+	private UsageSessionService usageSessionService;
+	public void setUsageSessionService(UsageSessionService usageSessionService) {
+		this.usageSessionService = usageSessionService;
+	}
 
     RequestStorage requestStorage = null;
     public void setRequestStorage(RequestStorage requestStorage) {
