@@ -57,3 +57,15 @@ padding-left:2em;
 .refresh {
 	background-image: url(/library/image/silk/arrow_refresh.png);
  }
+}
+
+/* m.ox styles */
+td.centre {
+	text-align:center;
+}
+.mobile-info-link img {
+	height: 50px;
+}
+
+
+
