@@ -38,3 +38,11 @@ thead tr .headerSortDown a {
 background:transparent url(/library/image/silk/add.png) no-repeat scroll left center;
 padding-left:2em;
 }
+
+/* m.ox styles */
+td.centre {
+	text-align:center;
+}
+.mobile-info-link img {
+	height: 50px;
+}
