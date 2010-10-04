@@ -24,12 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.sakaiproject.entitybroker.EntityReference;
 import org.sakaiproject.entitybroker.entityprovider.CoreEntityProvider;
 import org.sakaiproject.entitybroker.entityprovider.capabilities.RESTful;
 import org.sakaiproject.entitybroker.entityprovider.extension.Formats;
 import org.sakaiproject.entitybroker.entityprovider.search.Restriction;
 import org.sakaiproject.entitybroker.entityprovider.search.Search;
+import org.sakaiproject.entitybroker.exception.EntityException;
 import org.sakaiproject.entitybroker.util.AbstractEntityProvider;
 import org.sakaiproject.poll.logic.PollListManager;
 import org.sakaiproject.poll.model.Option;
@@ -68,7 +71,7 @@ public class PollOptionEntityProvider extends AbstractEntityProvider implements 
     public String createEntity(EntityReference ref, Object entity, Map<String, Object> params) {
         String userReference = developerHelperService.getCurrentUserReference();
         if (userReference == null) {
-            throw new SecurityException("user must be logged in to create new options");
+            throw new EntityException("User must be logged in to create new options", ref.getId(), HttpServletResponse.SC_UNAUTHORIZED);
         }
         Option option = (Option) entity;
         // check minimum settings
@@ -96,7 +99,7 @@ public class PollOptionEntityProvider extends AbstractEntityProvider implements 
         }
         String userReference = developerHelperService.getCurrentUserReference();
         if (userReference == null) {
-            throw new SecurityException("anonymous user cannot update option: " + ref);
+            throw new EntityException("Anonymous user cannot update option", ref.getId(), HttpServletResponse.SC_UNAUTHORIZED);
         }
         Option current = getOptionById(id);
         if (current == null) {
@@ -115,7 +118,7 @@ public class PollOptionEntityProvider extends AbstractEntityProvider implements 
         String id = ref.getId();
         String userReference = developerHelperService.getCurrentUserReference();
         if (userReference == null) {
-            throw new SecurityException("anonymous user cannot delete option: " + ref);
+            throw new EntityException("Anonymous user cannot delete option", ref.getId(), HttpServletResponse.SC_UNAUTHORIZED);
         }
         Option option = getOptionById(id);
         if (option == null) {
@@ -136,7 +139,7 @@ public class PollOptionEntityProvider extends AbstractEntityProvider implements 
         }
         String currentUser = developerHelperService.getCurrentUserReference();
         if (currentUser == null) {
-            throw new SecurityException("Anonymous users cannot view specific votes: " + ref);
+            throw new EntityException("Anonymous users cannot view specific options", ref.getId(), HttpServletResponse.SC_UNAUTHORIZED);
         }
         Option option = getOptionById(id);
         if (developerHelperService.isEntityRequestInternal(ref.toString())) {
@@ -156,7 +159,7 @@ public class PollOptionEntityProvider extends AbstractEntityProvider implements 
     public List<?> getEntities(EntityReference ref, Search search) {
         String currentUser = developerHelperService.getCurrentUserReference();
         if (currentUser == null) {
-            throw new SecurityException("Anonymous users cannot view poll options: " + ref);
+            throw new EntityException("Anonymous users cannot view poll options", ref.getId(), HttpServletResponse.SC_UNAUTHORIZED);
         }
         // get the pollId
         Restriction pollRes = search.getRestrictionByProperty("pollId");

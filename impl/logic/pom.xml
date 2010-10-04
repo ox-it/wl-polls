@@ -4,7 +4,7 @@
   <parent>
     <artifactId>polls-base</artifactId>
     <groupId>org.sakaiproject</groupId>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.6-SNAPSHOT</version>
 <!-- polls.version -->
     <relativePath>../../pom.xml</relativePath>
   </parent>
@@ -58,9 +58,9 @@
     </dependency>
 <!-- testing dependencies -->
     <dependency>
-      <groupId>${sakai.spring.groupId}</groupId>
-      <artifactId>${sakai.spring.mock.artifactId}</artifactId>
-      <version>${sakai.spring.mock.version}</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-mock</artifactId>
+      <version>2.0.6</version>
       <scope>test</scope>
     </dependency>
     <dependency>
