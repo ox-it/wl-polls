@@ -30,6 +30,7 @@ import org.sakaiproject.poll.model.Poll;
 import org.sakaiproject.poll.model.VoteCollection;
 import org.sakaiproject.poll.tool.params.PollViewParameters;
 import org.sakaiproject.poll.tool.params.VoteCollectionViewParameters;
+import org.sakaiproject.user.cover.UserDirectoryService;
 
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -142,8 +143,14 @@ public class PollVoteProducer implements ViewComponentProducer,ViewParamsReporte
 
 			m_log.debug("got poll " + poll.getText());
 
+			//check if they are allowed to vote
+			if(!pollVoteManager.isUserAllowedVote(UserDirectoryService.getCurrentUser().getId(), poll.getPollId(), true)){
+				m_log.warn("Not allowed to vote");
+				UIOutput.make(tofill, "hasErrors",messageLocator.getMessage("vote_noperm"));
+				return;
+			}
 
-			//check if they can vote
+			//check if they have already voted
 			if (poll.getLimitVoting() && pollVoteManager.userHasVoted(poll.getPollId())) {
 				m_log.warn("This user has already voted!");
 				UIOutput.make(tofill, "hasErrors",messageLocator.getMessage("vote_hasvoted"));

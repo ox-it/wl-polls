@@ -99,11 +99,15 @@ public class VoteValidator implements Validator {
 		
 	//does the user have permission to vote
 	if (!SecurityService.isSuperUser()) {
-		if (!SecurityService.unlock("poll.vote","/site/" + toolManager.getCurrentPlacement().getContext()))
-		{
-			logger.warn("attempt to vote in " + toolManager.getCurrentPlacement().getContext() + " by unauthorized user" );
-			errors.reject("vote_noperm","no permissions");
-			return;
+		
+		//if its not public...
+		if(!manager.isPollPublic(poll)){
+			//does the user have permission?
+			if (!SecurityService.unlock("poll.vote","/site/" + toolManager.getCurrentPlacement().getContext())){
+				logger.warn("attempt to vote in " + toolManager.getCurrentPlacement().getContext() + " by unauthorized user" );
+				errors.reject("vote_noperm","no permissions");
+				return;
+			}
 		}
 	}
 	

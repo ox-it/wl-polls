@@ -184,6 +184,13 @@ public class PollVoteManagerDaoImpl extends HibernateDaoSupport implements PollV
                     }
                 }
             }
+
+            //SAK-18855 individual public polls
+            if(poll.getIsPublic()) {
+            	log.debug("this poll is votable because it is public, " + poll.getText());
+            	return true;
+            }
+            
         }
         return allowed;
     }

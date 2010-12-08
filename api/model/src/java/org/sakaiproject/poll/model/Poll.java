@@ -61,6 +61,8 @@ public class Poll implements Entity  {
     private List<Vote> currentUserVotes = null;
 
     private String entityID;
+    
+    private boolean isPublic = false;
 
     public Poll() {
         //set the defaults
@@ -69,6 +71,7 @@ public class Poll implements Entity  {
         this.minOptions = 1;
         this.maxOptions = 1;
         this.limitVoting = true;
+        this.isPublic = false;
         this.voteOpen = new Date();
 
         Calendar cal = Calendar.getInstance();
@@ -319,6 +322,14 @@ public class Poll implements Entity  {
     public void setId(String s) {
         entityID = s;
     }
+    
+    public boolean getIsPublic() {
+    	return isPublic;
+	}
+
+	public void setIsPublic(boolean isPublic) {
+		this.isPublic = isPublic;
+	}
 
     public ResourceProperties getProperties() {
         // TODO Auto-generated method stub

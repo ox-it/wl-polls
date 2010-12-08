@@ -663,6 +663,12 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 	}
 	
 	public boolean isPollPublic(Poll poll) {
+		
+		//is this poll public?
+		if(poll.getIsPublic()){
+			return true;
+		}
+		
 		//can the anonymous user vote?
 		if(securityService.unlock(userDirectoryService.getAnonymousUser(), PollListManager.PERMISSION_VOTE, siteService.siteReference(poll.getSiteId()))){
 			return true;
