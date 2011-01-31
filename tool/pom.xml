@@ -25,6 +25,10 @@
       <artifactId>sakai-kernel-util</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.sakaiproject.kernel</groupId>
+	  <artifactId>sakai-component-manager</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.sakaiproject</groupId>
       <artifactId>sakai-poll-model-api</artifactId>
     </dependency>
@@ -62,6 +66,7 @@
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
     </dependency>
 <!-- Other Sakai dependencies -->
 <!--org.sakaiprojectsakai-util-api${sakai.version}-->
