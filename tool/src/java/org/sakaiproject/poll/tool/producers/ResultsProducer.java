@@ -37,6 +37,7 @@ import org.sakaiproject.poll.model.Option;
 import org.sakaiproject.poll.model.Poll;
 import org.sakaiproject.poll.model.Vote;
 import org.sakaiproject.poll.tool.params.PollViewParameters;
+import org.sakaiproject.component.cover.ServerConfigurationService;
 
 import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.messageutil.MessageLocator;
@@ -59,8 +60,15 @@ import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UIMessage;
+import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
+
+import java.util.Map;
+import java.util.LinkedHashMap;
+import org.apache.commons.lang.StringUtils;
 
 public class ResultsProducer implements ViewComponentProducer,NavigationCaseReporter,ViewParamsReporter {
 
@@ -201,6 +209,7 @@ public class ResultsProducer implements ViewComponentProducer,NavigationCaseRepo
 			UIBranchContainer resultRow = UIBranchContainer.make(tofill,"answer-row:",cv.getoptionId().toString());
 			
 			String optionText = cv.getOptionText();
+			UIVerbatim.make(resultRow,"answer-option",optionText);
 			if (cv.getDeleted()) {
 				optionText += messageLocator.getMessage("deleted_option_tag_html");
 			}
