@@ -234,6 +234,7 @@ public class ResultsProducer implements ViewComponentProducer,NavigationCaseRepo
 			chartTextData.put(cv.getoptionId(), StringUtils.removeStart(optionText, "&nbsp;"));
 			chartValueData.put(cv.getoptionId(), StringUtils.removeEnd(nf.format(percent), "%"));
 
+
 			LOG.debug("result is "+ percent);
 			UIOutput.make(resultRow,"answer-percVotes", nf.format(percent));
 
