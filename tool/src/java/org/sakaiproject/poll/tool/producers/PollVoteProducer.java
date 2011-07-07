@@ -23,6 +23,8 @@ package org.sakaiproject.poll.tool.producers;
 
 
 
+import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.poll.logic.PollListManager;
 import org.sakaiproject.poll.logic.PollVoteManager;
 import org.sakaiproject.poll.model.Option;
@@ -57,6 +59,7 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 
 
@@ -75,6 +78,7 @@ public class PollVoteProducer implements ViewComponentProducer,ViewParamsReporte
 	private MessageLocator messageLocator;
 	private TargettedMessageList tml;
 	private PollVoteManager pollVoteManager;
+	private DeveloperHelperService developerHelperService = (DeveloperHelperService) ComponentManager.get(DeveloperHelperService.class);
 
 
 	private static Log m_log = LogFactory.getLog(PollVoteProducer.class);
@@ -141,6 +145,13 @@ public class PollVoteProducer implements ViewComponentProducer,ViewParamsReporte
 			m_log.debug("got id of " + strId);
 			Poll poll = pollListManager.getPollById(Long.valueOf(strId));
 
+			if (!developerHelperService.isUserAllowedInEntityReference(
+					developerHelperService.getCurrentUserReference(), PollListManager.PERMISSION_VOTE, developerHelperService.getCurrentLocationReference())) {
+				tml.addMessage(new TargettedMessage("vote_noperm"));
+				return;
+			} else {
+				m_log.debug("user: " + developerHelperService.getCurrentUserId() + " can vote on poll: " + poll.getPollId());
+			}
 			m_log.debug("got poll " + poll.getText());
 
 			//check if they are allowed to vote

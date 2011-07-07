@@ -21,6 +21,8 @@
 
 package org.sakaiproject.poll.tool.producers;
 
+import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.tool.api.ToolManager;
 import org.sakaiproject.event.api.EventTrackingService;
 import org.sakaiproject.poll.model.Option;
@@ -35,6 +37,8 @@ import org.sakaiproject.component.cover.ServerConfigurationService;
 
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -84,6 +88,7 @@ public class ResultsProducer implements ViewComponentProducer,NavigationCaseRepo
 	private MessageLocator messageLocator;
 	private LocaleGetter localegetter;
 	private ToolManager toolManager;	  
+	private DeveloperHelperService developerHelperService = (DeveloperHelperService) ComponentManager.get(DeveloperHelperService.class);
 
 	private static Log m_log  = LogFactory.getLog(ResultsProducer.class);
 
@@ -129,6 +134,11 @@ public class ResultsProducer implements ViewComponentProducer,NavigationCaseRepo
 	public void setEventTrackingService(EventTrackingService ets) {
 		eventTrackingService = ets;
 	}
+    
+	private TargettedMessageList tml;
+	public void setTargettedMessageList(TargettedMessageList tml) {
+		this.tml = tml;
+	}
 
 	public void fillComponents(UIContainer tofill, ViewParameters viewparams,
 			ComponentChecker checker) {
@@ -140,6 +150,12 @@ public class ResultsProducer implements ViewComponentProducer,NavigationCaseRepo
 		Poll poll = pollListManager.getPollById(Long.valueOf(strId));
 
 
+		if (!pollListManager.isAllowedViewResults(poll, developerHelperService.getCurrentUserId())) {
+			tml.addMessage(new TargettedMessage("poll.noviewresult", new Object[]{}, TargettedMessage.SEVERITY_ERROR));
+			return;
+			
+		}
+		
 		//get the number of votes
 		int voters = pollVoteManager.getDisctinctVotersForPoll(poll);
 		//Object[] args = new Object[] { Integer.valueOf(voters).toString()};

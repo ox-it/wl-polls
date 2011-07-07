@@ -27,6 +27,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.sakaiproject.component.cover.ComponentManager;
+import org.sakaiproject.entitybroker.DeveloperHelperService;
 import org.sakaiproject.poll.logic.PollListManager;
 import org.sakaiproject.poll.logic.PollVoteManager;
 import org.sakaiproject.poll.model.Option;
@@ -42,6 +44,7 @@ import org.sakaiproject.util.FormattedText;
 
 import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -79,6 +82,7 @@ public class AddPollProducer implements ViewComponentProducer,NavigationCaseRepo
 	  private ToolManager toolManager;
 	  private MessageLocator messageLocator;
 	  private LocaleGetter localegetter;
+	  private DeveloperHelperService developerHelperService = (DeveloperHelperService) ComponentManager.get(DeveloperHelperService.class);
 
 	  
 	  private static Log m_log = LogFactory.getLog(AddPollProducer.class);
@@ -189,6 +193,13 @@ public class AddPollProducer implements ViewComponentProducer,NavigationCaseRepo
 		}
 	    
 	    
+		if (!developerHelperService.isUserAdmin(developerHelperService.getCurrentUserReference())
+				&& !developerHelperService.isUserAllowedInEntityReference(developerHelperService.getCurrentUserReference(), PollListManager.PERMISSION_ADD,
+						developerHelperService.getCurrentLocationReference())) {
+			tml.addMessage(new TargettedMessage("new_poll_noperms"));
+			return;			
+		}
+
 	    //only display for exisiting polls
 	    if (!isNew) {
 			//fill the options list
