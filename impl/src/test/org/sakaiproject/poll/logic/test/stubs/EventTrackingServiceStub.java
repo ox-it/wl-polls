@@ -103,4 +103,9 @@ public class EventTrackingServiceStub implements EventTrackingService {
 
 	}
 
+	public void cleanupEvents() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -21,6 +21,7 @@
 				<property name="entityManager"
 			ref="org.sakaiproject.entity.api.EntityManager" />
 		<property name="externalLogic" ref="org.sakaiproject.poll.logic.ExternalLogic"/>
+        <property name="contentCopy" ref="org.sakaiproject.content.api.ContentCopy" />
     </bean>
 
 	<bean id="org.sakaiproject.tool.poll.api.PollVoteManager"

@@ -122,6 +122,12 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.sakaiproject.kernel</groupId>
+                <artifactId>sakai-kernel-api</artifactId>
+                <version>1.0.12ox2-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>polls-api</artifactId>
                 <version>${project.version}</version>
