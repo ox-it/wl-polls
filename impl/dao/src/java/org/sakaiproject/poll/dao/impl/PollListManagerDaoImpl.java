@@ -40,6 +40,8 @@ import org.hibernate.criterion.Restrictions;
 import org.sakaiproject.authz.api.AuthzGroupService;
 import org.sakaiproject.authz.api.FunctionManager;
 import org.sakaiproject.authz.api.SecurityService;
+import org.sakaiproject.content.api.ContentCopy;
+import org.sakaiproject.content.api.ContentCopyContext;
 import org.sakaiproject.entity.api.Entity;
 import org.sakaiproject.entity.api.EntityManager;
 import org.sakaiproject.entity.api.EntityTransferrer;
@@ -112,6 +114,11 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
     private UserDirectoryService userDirectoryService;
     public void setUserDirectoryService(UserDirectoryService userDirectoryService) {
     	this.userDirectoryService = userDirectoryService;
+    }
+    
+    private ContentCopy contentCopy;
+    public void setContentCopy(ContentCopy contentCopy) {
+    	this.contentCopy = contentCopy;
     }
 
     public void init() {
@@ -538,6 +545,8 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 		}
 
 		public void transferCopyEntities(String fromContext, String toContext, List resourceIds){
+			// Create the copycontext to track re-writing and copying.
+			ContentCopyContext context = contentCopy.createCopyContext(fromContext, toContext, true);
 			try{
 				Iterator fromPolls = findAllPolls(fromContext).iterator();
 				while (fromPolls.hasNext()){
@@ -554,7 +563,10 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 			        toPoll.setVoteClose(fromPollV.getVoteClose());		       
 			        toPoll.setDisplayResult(fromPollV.getDisplayResult());
 			        toPoll.setLimitVoting(fromPollV.getLimitVoting());
-			        toPoll.setDetails(fromPollV.getDetails());
+			        
+			        // Update any references in the details.
+			        String toDetails = contentCopy.convertContent(context, fromPollV.getDetails(), "text/html", null);
+			        toPoll.setDetails(toDetails);
 			        
 			        //Guardamos toPoll para que se puedan ir añandiéndole las opciones y los votos
 			        savePoll(toPoll);
@@ -566,7 +578,9 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 				        while (fromOptions.hasNext()){
 				        	Option fromOption = (Option) fromOptions.next();
 				        	Option toOption = (Option) new Option();
-				        	toOption.setOptionText(fromOption.getOptionText());
+				        	// Convert any references
+				        	String toText = contentCopy.convertContent(context, fromOption.getOptionText(), "text/html", null);
+				        	toOption.setOptionText(toText);
 				        	toOption.setStatus(fromOption.getStatus());
 				        	toOption.setPollId(toPoll.getPollId());
 				        	saveOption(toOption);
@@ -587,6 +601,7 @@ public class PollListManagerDaoImpl extends HibernateDaoSupport implements PollL
 			        //Actualizamos toPoll
 			        savePoll(toPoll);
 				}
+				contentCopy.copyReferences(context);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
