@@ -33,9 +33,9 @@
     </modules>
     
     <scm>
-        <connection>scm:svn:https://source.sakaiproject.org/svn/polls/trunk</connection>
-        <developerConnection>scm:svn:https://source.sakaiproject.org/svn/polls/trunk</developerConnection>
         <url>https://source.sakaiproject.org/svn/polls/trunk</url>
+        <connection>scm:git:ssh://git-repo.oucs.ox.ac.uk/~git/repos/local-version/sakai/polls.git</connection>
+        <developerConnection>scm:git:ssh://git-repo.oucs.ox.ac.uk/~git/repos/local-version/sakai/polls.git</developerConnection>
     </scm>
 
     <distributionManagement>
@@ -44,6 +44,14 @@
             <name>Sakai release Site</name>
             <url>scpexe://source.sakaiproject.org/var/www/html/release/polls/${project.version}</url>
         </site>
+        <repository>
+            <id>maven-repo.oucs</id>
+            <url>http://maven-repo.oucs.ox.ac.uk/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-repo.oucs</id>
+            <url>http://maven-repo.oucs.ox.ac.uk/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
     
     <dependencyManagement>
