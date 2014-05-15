@@ -211,4 +211,9 @@ public class ExternalLogicStubb implements ExternalLogic {
     public void registerStatement(String pollText, boolean newPoll) {
         // TODO Auto-generated method stub
     }
+
+    @Override
+    public boolean userCanDeletePoll(String owner) {
+        return false;
+    }
 }

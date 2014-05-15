@@ -211,11 +211,13 @@ public class PollToolBean {
         for (int i = 0; i < deleteids.length; i ++) {
             Poll poll = manager.getPollById(Long.valueOf(deleteids[i].longValue()));
             List<Vote> votes = pollVoteManager.getAllVotesForPoll(poll);
-            try {
-                pollVoteManager.deleteAll(votes);
-            }
-            catch(SecurityException e){
-                LOG.error(" Permission Error" + e);
+            if (externalLogic.userCanDeletePoll(poll.getOwner())){
+                try {
+                    pollVoteManager.deleteAll(votes);
+                }
+                catch(SecurityException e){
+                    LOG.error(" Permission Error deleting votes" + e);
+                }
             }
         }
     }

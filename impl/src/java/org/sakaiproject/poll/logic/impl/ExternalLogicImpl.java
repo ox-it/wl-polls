@@ -579,4 +579,16 @@ public class ExternalLogicImpl implements ExternalLogic {
             lrss.registerStatement(getStatementForUserEditPoll(lrss.getEventActor(event), pollText, newPoll), "polls");
         }
     }
+
+    @Override
+    public boolean userCanDeletePoll(String owner) {
+        if (isUserAdmin())
+            return true;
+        if (isAllowedInLocation(PollListManager.PERMISSION_DELETE_ANY, getCurrentLocationReference()))
+            return true;
+        if (isAllowedInLocation(PollListManager.PERMISSION_DELETE_OWN, getCurrentLocationReference()) && owner.equals(getCurrentUserId()))
+            return true;
+
+        return false;
+    }
 }

@@ -333,14 +333,6 @@ DefaultView,NavigationCaseReporter {
 	}
 
 	private boolean pollCanDelete(Poll poll) {
-		if (externalLogic.isUserAdmin())
-			return true;
-		if (externalLogic.isAllowedInLocation(PollListManager.PERMISSION_DELETE_ANY, externalLogic.getCurrentLocationReference()))
-			return true;
-
-		if (externalLogic.isAllowedInLocation(PollListManager.PERMISSION_DELETE_OWN, externalLogic.getCurrentLocationReference()) && poll.getOwner().equals(externalLogic.getCurrentUserId())) 
-			return true;
-
-		return false;
+		return externalLogic.userCanDeletePoll(poll.getOwner());
 	}
 }
