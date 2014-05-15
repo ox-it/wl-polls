@@ -262,7 +262,7 @@ DefaultView,NavigationCaseReporter {
 				UIVerbatim.make(pollrow,"poll-close-date","  ");
 
 			if (pollCanEdit(poll)) {
-				UIInternalLink editLink = UIInternalLink.make(pollrow,"poll-revise",messageLocator.getMessage("action_revise_poll"),  
+				UIInternalLink editLink = UIInternalLink.make(pollrow,"poll-revise",messageLocator.getMessage("action_revise_poll"),
 						new PollViewParameters(AddPollProducer.VIEW_ID,poll.getPollId().toString()));
 				editLink.decorators = new DecoratorList(new UITooltipDecorator(messageLocator.getMessage("action_revise_poll")+ ":" + poll.getText()));
 
@@ -286,8 +286,9 @@ DefaultView,NavigationCaseReporter {
 
 		if (renderDelete) 
 			UICommand.make(deleteForm, "delete-polls",  UIMessage.make("poll_list_delete"),
-			"#{pollToolBean.processActionDelete}").decorators = new DecoratorList(new UITooltipDecorator(messageLocator.getMessage("poll_list_delete_tooltip")));
-			
+					"#{pollToolBean.processActionDelete}").decorators = new DecoratorList(new UITooltipDecorator(messageLocator.getMessage("poll_list_delete_tooltip")));
+			UICommand.make(deleteForm, "reset-polls-votes",  UIMessage.make("poll_list_reset"),
+					"#{pollToolBean.processActionResetVotes}").decorators = new DecoratorList(new UITooltipDecorator(messageLocator.getMessage("poll_list_reset_tooltip")));
 		}
 	}
 
