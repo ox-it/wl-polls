@@ -212,12 +212,7 @@ public class PollToolBean {
 			Poll poll = manager.getPollById(Long.valueOf(deleteids[i].longValue()));
 			List<Vote> votes = pollVoteManager.getAllVotesForPoll(poll);
 			if (manager.userCanDeletePoll(poll)){
-				try {
-					pollVoteManager.deleteAll(votes);
-				}
-				catch(SecurityException e){
-					LOG.error(" Permission Error deleting votes" + e);
-				}
+				pollVoteManager.deleteAll(votes);
 			}
 		}
 	}
