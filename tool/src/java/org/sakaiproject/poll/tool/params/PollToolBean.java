@@ -206,21 +206,21 @@ public class PollToolBean {
 
 	}
 
-    public void processActionResetVotes() {
+	public void processActionResetVotes() {
 
-        for (int i = 0; i < deleteids.length; i ++) {
-            Poll poll = manager.getPollById(Long.valueOf(deleteids[i].longValue()));
-            List<Vote> votes = pollVoteManager.getAllVotesForPoll(poll);
-            if (manager.userCanDeletePoll(poll)){
-                try {
-                    pollVoteManager.deleteAll(votes);
-                }
-                catch(SecurityException e){
-                    LOG.error(" Permission Error deleting votes" + e);
-                }
-            }
-        }
-    }
+		for (int i = 0; i < deleteids.length; i ++) {
+			Poll poll = manager.getPollById(Long.valueOf(deleteids[i].longValue()));
+			List<Vote> votes = pollVoteManager.getAllVotesForPoll(poll);
+			if (manager.userCanDeletePoll(poll)){
+				try {
+					pollVoteManager.deleteAll(votes);
+				}
+				catch(SecurityException e){
+					LOG.error(" Permission Error deleting votes" + e);
+				}
+			}
+		}
+	}
 
 	public VoteCollection processActionVote() {
 		//m_log.info("got a vote! with " + optionsSelected.length + "options");
