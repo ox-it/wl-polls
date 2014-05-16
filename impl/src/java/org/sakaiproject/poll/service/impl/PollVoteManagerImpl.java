@@ -244,4 +244,10 @@ public class PollVoteManagerImpl implements PollVoteManager {
 	public void deleteVote(Vote vote) {
 		dao.delete(vote);
 	}
+
+    public void deleteAll(List<Vote> votes) {
+        for (Vote vote : votes) {
+            deleteVote(vote);
+        }
+    }
 }
