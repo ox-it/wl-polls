@@ -212,8 +212,4 @@ public class ExternalLogicStubb implements ExternalLogic {
         // TODO Auto-generated method stub
     }
 
-    @Override
-    public boolean userCanDeletePoll(String owner) {
-        return false;
-    }
 }

@@ -333,6 +333,6 @@ DefaultView,NavigationCaseReporter {
 	}
 
 	private boolean pollCanDelete(Poll poll) {
-		return externalLogic.userCanDeletePoll(poll.getOwner());
+		return pollListManager.userCanDeletePoll(poll);
 	}
 }

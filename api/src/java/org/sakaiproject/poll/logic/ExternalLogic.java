@@ -233,12 +233,4 @@ public interface ExternalLogic {
      */
     public void registerStatement(String pollText, boolean newPoll);
 
-    /**
-     * Is user allowed to delete the votes on a poll
-     *
-     * @param owner
-     * 	The owner of the poll
-     * @return true or false
-     */
-    public boolean userCanDeletePoll(String owner);
 }

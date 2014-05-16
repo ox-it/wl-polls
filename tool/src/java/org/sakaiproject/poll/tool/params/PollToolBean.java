@@ -211,7 +211,7 @@ public class PollToolBean {
         for (int i = 0; i < deleteids.length; i ++) {
             Poll poll = manager.getPollById(Long.valueOf(deleteids[i].longValue()));
             List<Vote> votes = pollVoteManager.getAllVotesForPoll(poll);
-            if (externalLogic.userCanDeletePoll(poll.getOwner())){
+            if (manager.userCanDeletePoll(poll)){
                 try {
                     pollVoteManager.deleteAll(votes);
                 }
