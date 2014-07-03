@@ -32,6 +32,25 @@
 	<a href="voteAdd.html" rsf:id="add-poll">Add</a>
 </div>
 
+<div rsf:id="poll_list_remove_confirm" id="poll_list_remove_confirm"></div>
+<div rsf:id="poll_list_reset_confirm" id="poll_list_reset_confirm"></div>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+        $('#remove-all').click(function(){
+            $('.checkbox-cell input').attr('checked', $(this).is(':checked'));
+        });
+        $('#delete-polls').click(function(){
+            var removeMessage = $('#poll_list_remove_confirm').text();
+            return confirm(removeMessage);
+        });
+        $('#reset-polls-votes').click(function(){
+            var resetMessage = $('#poll_list_reset_confirm').text();
+            return confirm(resetMessage);
+        });
+	});
+</script>
+
 <form rsf:id="delete-poll-form">
 <!-- This span is needed here to guide the renderer away to the checkboxes -->
 <span rsf:id="delete-poll"/>
@@ -45,7 +64,7 @@
       <th><a rsf:id="poll-open-title" title=" Sort by Opening Date" href="#">Opening</a></th>
       <th><a rsf:id="poll-close-title" title="Sort by Closing Date" href="#">Closing</a></th>
       <th rsf:id="poll-result-title">Results</th>
-      <th rsf:id="poll-remove-title">Remove?</th>
+      <th><label for="remove-all" class="skip"><span  rsf:id="poll-remove-title">Remove all</span></label><input type="checkbox" id="remove-all"/></th>
     </tr>
   </thead>
   <tbody id="tasks:polllist:tbody_element">
@@ -58,7 +77,7 @@
       <td rsf:id="poll-open-date">opening date</td>
       <td rsf:id="poll-close-date">closing date</td>
       <td><a rsf:id="poll-results">Results</a></td>
-      <td><label rsf:id="delete-label" id="check-2" class="skip">Label for element</label><input rsf:id="poll-select" title="Select to remove" type="checkbox" id="check-2" name="deletePoll" value="" /> 
+      <td class="checkbox-cell"><label rsf:id="delete-label" id="check-2" class="skip">Label for element</label><input rsf:id="poll-select" title="Select to remove" type="checkbox" id="check-2" name="deletePoll" value="" />
       </td>
     </tr>
     <tr rsf:id="poll-row:nonvotable">
@@ -69,15 +88,15 @@
       <td rsf:id="poll-open-date">opening date</td>
       <td rsf:id="poll-close-date">closing date</td>
       <td><a href="voteResults.html" target="_self" rsf:id="poll-results">Results</a></td>
-      <td><label rsf:id="delete-label" id="check-2" class="skip">Label for element</label><input rsf:id="poll-select" title="Select to remove" type="checkbox" id="check-2" name="deletePoll" value="" /> 
+      <td class="checkbox-cell"><label rsf:id="delete-label" id="check-2" class="skip">Label for element</label><input rsf:id="poll-select" title="Select to remove" type="checkbox" id="check-2" name="deletePoll" value="" />
       </td>
     </tr>
   </tbody>
 </table>
 
 <p class="act">
-<input type="submit" class="active" rsf:id="delete-polls" name="deleteSelectPoll" value="Update"  accesskey="s" />
-<input type="submit" class="active" rsf:id="reset-polls-votes" name="resetSelectPoll" value="Reset"  accesskey="r" />
+<input type="submit" class="active" rsf:id="delete-polls" id="delete-polls" name="deleteSelectPoll" value="Update"  accesskey="s" />
+<input type="submit" class="active" rsf:id="reset-polls-votes" id="reset-polls-votes" name="resetSelectPoll" value="Reset"  accesskey="r" />
 </p>
 </form>
 </div>
