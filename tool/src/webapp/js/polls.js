@@ -44,7 +44,6 @@ $(document).ready(function() {
                 $("#dialog-mox-url").html(data);
 
                 //also set img tag for QR code
-                //var imgUrl = "http://chart.apis.google.com/chart?chs=250x250&cht=qr&chl=" + data;
                 var imgUrl = "/direct/oxford/qr?height=547&width=547&s=" + data;
                 $('#dialog-qr-code').attr("src", imgUrl);
 
@@ -91,9 +90,6 @@ $(document).ready(function() {
                 var clientH = document.body.clientHeight + 450;
             }
             $(frame).height(clientH);
-        }
-        else {
-            //throw( "resizeFrame did not get the frame (using name=" + window.name + ")" );
         }
     }
 
