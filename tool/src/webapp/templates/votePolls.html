@@ -7,9 +7,9 @@
 <link href="../css/poll_base.css" type="text/css" rel="stylesheet" media="all"/>
 <link href="/library/js/jquery/ui/1.8.4/css/ui-lightness/jquery-ui-1.8.4.full.css" type="text/css" rel="stylesheet" media="all"/>
 <script  rsf:id="scr=portal-matter" type="text/javascript" language="JavaScript" src="/library/js/headscripts.js"></script>
-<script language="javascript" type="text/javascript" src="/library/js/jquery/ui/1.8.4/jquery-ui-1.8.4.full.min.js"></script>
-<script type="text/javascript" src="/library/js/jquery/jquery-1.9.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="/library/js/jquery/1.4.2/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="/library/js/jquery/tablesorter/2.0.3/jquery.tablesorter-2.0.3.min.js"></script>
+<script type="text/javascript" src="/library/js/jquery/ui/1.8.4/jquery-ui-1.8.4.full.min.js"></script>
 <script type="text/javascript" src="../js/polls.js"></script>
 </head>
 
@@ -90,8 +90,8 @@
 </table>
 
 <p class="act">
-<input type="submit" class="active" rsf:id="delete-polls" name="deleteSelectPoll" value="Update"  accesskey="s" />
-<input type="submit" class="active" rsf:id="reset-polls-votes" name="resetSelectPoll" value="Reset"  accesskey="r" />
+    <input type="submit" class="active" rsf:id="delete-polls" name="deleteSelectPoll" onclick="return confirm('Are you sure you want to remove the following item(s)?');" value="Update"  accesskey="s" />
+    <input type="submit" class="active" rsf:id="reset-polls-votes" name="resetSelectPoll" onclick="return confirm('Are you sure you want to reset the following item(s)?');" value="Reset"  accesskey="r" />
 </p>
 </form>
 </div>
