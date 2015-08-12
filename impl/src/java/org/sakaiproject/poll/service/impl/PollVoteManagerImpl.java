@@ -137,11 +137,16 @@ public class PollVoteManagerImpl implements PollVoteManager {
 		Search search = new Search();
 		search.addRestriction(new Restriction("userId",userID));
 		search.addRestriction(new Restriction("pollId",pollid));
-		List<Vote> votes = dao.findBySearch(Vote.class, search);		
-		if (votes.size() > 0)
-			return true;
-		else
+		try {
+			List<Vote> votes = dao.findBySearch(Vote.class, search);
+			if (votes.size() > 0)
+				return true;
+			else
+				return false;
+		}catch(Exception e) {
+			log.debug("Poll has null values on search criteria"+e.getMessage());
 			return false;
+		}
 	}
 
 	public boolean userHasVoted(Long pollId) {
