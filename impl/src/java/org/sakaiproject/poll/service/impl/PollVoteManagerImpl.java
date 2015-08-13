@@ -65,17 +65,14 @@ public class PollVoteManagerImpl implements PollVoteManager {
 
 	public void saveVoteList(List<Vote> votes) {
 		Long pollId = null;
-		try {
-			for (int i = 0; i < votes.size(); i++) {
-				Vote vote = (Vote) votes.get(i);
-				pollId = vote.getPollId();
-				saveVote(vote);
-				externalLogic.registerStatement(pollListManager.getPollById(pollId).getText(), vote);
-			}
-			externalLogic.postEvent("poll.vote", "poll/site/" + externalLogic.getCurrentLocationReference() + "/poll/" + pollId, true);
-		}catch(Exception e) {
-			log.debug("Unexpected error when saving vote"+e.getMessage());
+		for (int i =0; i < votes.size(); i ++) {
+			Vote vote = (Vote)votes.get(i);
+			pollId = vote.getPollId();
+			saveVote(vote);
+            externalLogic.registerStatement(pollListManager.getPollById(pollId).getText(), vote);
 		}
+
+		externalLogic.postEvent("poll.vote", "poll/site/" + externalLogic.getCurrentLocationReference() +"/poll/" +  pollId, true);
 	}
 
 	public boolean saveVote(Vote vote)  {
@@ -140,16 +137,11 @@ public class PollVoteManagerImpl implements PollVoteManager {
 		Search search = new Search();
 		search.addRestriction(new Restriction("userId",userID));
 		search.addRestriction(new Restriction("pollId",pollid));
-		try {
-			List<Vote> votes = dao.findBySearch(Vote.class, search);
-			if (votes.size() > 0)
-				return true;
-			else
-				return false;
-		}catch(Exception e) {
-			log.debug("Poll has null values on search criteria"+e.getMessage());
+		List<Vote> votes = dao.findBySearch(Vote.class, search);		
+		if (votes.size() > 0)
+			return true;
+		else
 			return false;
-		}
 	}
 
 	public boolean userHasVoted(Long pollId) {
